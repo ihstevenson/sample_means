@@ -117,6 +117,12 @@ shinyServer(function(input, output) {
          cex.axis=tscale,
          cex.main=tscale,
          cex.sub=tscale)
+    if (any(x<xmin)) {
+      points(rep(xmin-0.1,sum(x<xmin)),rbeta(sum(x<xmin),2,2),lwd=2,col=tcol,cex=tscale)
+    }
+    if (any(x>xmax)) {
+      points(rep(xmax+0.1,sum(x>xmax)),rbeta(sum(x>xmax),2,2),lwd=2,col=tcol,cex=tscale)
+    }
 
     # plot list of sample means with the latest sample highlighted and N(mu,sigma^2/n)
     breaks_mh=seq(xmin,xmax,length.out=100);
@@ -134,9 +140,6 @@ shinyServer(function(input, output) {
                       0))
     y0=y0/sum(y0)*length(means)*mean(diff(breaks_mh))/mean(diff(x0))
     
-    print(means)
-    print(mean(x,na.rm=TRUE))
-    
     nh<-hist(means,
              breaks=breaks_mh,
              main="Sample Means",
@@ -148,12 +151,14 @@ shinyServer(function(input, output) {
              cex.axis=tscale,
              cex.main=tscale,
              cex.sub=tscale)
-    hist(mean(x,na.rm=TRUE),
-         breaks=breaks_mh,
-         col=acol,
-         border=acol,
-         add=TRUE,
-         ylim=c(0,max(y0,max(nh$counts))))
+    if (mean(x)>xmin && mean(x)<xmax) {
+      hist(mean(x),
+           breaks=breaks_mh,
+           col=acol,
+           border=acol,
+           add=TRUE,
+           ylim=c(0,max(y0,max(nh$counts))))
+    }
     points(x0,y0,type="l",lwd=2)
     print(input$resample)
   },width=600,height=600)
