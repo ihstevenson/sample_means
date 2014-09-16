@@ -1,0 +1,6 @@
+Title: Distribution of Sample Means
+Author: Ian Stevenson (based on shiny example 06_tabsets)
+AuthorUrl: http://github.com/ihstevenson
+License: MIT
+DisplayMode: Showcase
+Type: Shiny

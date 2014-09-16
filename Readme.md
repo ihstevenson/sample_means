@@ -1,0 +1,1 @@
+This example builds on the `tabsetPanel` and `tabPanel` widgets, so illustrate the stats concept that the distribution of sample means becomes Gaussian with SEM=sd/sqrt(n).
