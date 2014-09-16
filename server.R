@@ -19,9 +19,32 @@ shinyServer(function(input, output) {
                    exp = rexp,
                    rnorm)
     
+    # in addition to input$dist and input$n react to changes in...
+    input$resample
+    input$checkbox
+    input$reps
+    
     dist(input$n) # draw n samples
   })
+  
+  # Reactive expression to update the list of means when the distribution changes
+  doReset <- reactive({
+    dist <- switch(input$dist,
+                   norm = rnorm,
+                   unif = runif,
+                   lnorm = rlnorm,
+                   exp = rexp,
+                   rnorm)
     
+    # in addition to input$dist react to changes in...
+    input$checkbox
+    input$n
+    input$reps
+    
+    means<<-NULL
+    print("reset")
+  })
+  
   # Generate a plot of the data. Also uses the inputs to build
   # the plot label. Note that the dependencies on both the inputs
   # and the data reactive expression are both tracked, and
@@ -36,23 +59,13 @@ shinyServer(function(input, output) {
     dist <- input$dist
     n <- input$n
     reps <- input$reps
-    
-    # generate a(nother) typical sample
-    x<-switch(dist,
-              norm = rnorm(n),
-              unif = runif(n),
-              lnorm = rlnorm(n),
-              exp = rexp(n),
-              rnorm(n))
+    x<-data()
+    doReset()
     
     # Add to list of sample means or repeat sampling reps times depending on checkbox
     if (input$checkbox) {
-      # Reset list of means if necessary
-      if (length(means)==reps) {
-        means<<-NULL
-        means_offset<<-input$resample
-      }
-      means[input$resample-means_offset]<<-mean(x)
+      if (length(means)==0) {means_offset<<-input$resample}
+      means[input$resample-means_offset+1]<<-mean(x)
       }
     else {
       means<<-1:reps
@@ -64,16 +77,16 @@ shinyServer(function(input, output) {
                                exp = rexp(n),
                                rnorm(n)))
       }
-    }    
-      
+    }
     
     # set plot range
     xmin = switch(dist, norm = -3, unif = 0, lnorm = 0, exp = 0, -3)
     xmax = switch(dist, norm =  3, unif = 1, lnorm = 4, exp = 4,  3)
     
     # do not plot outliers
-    x[x>xmax]<-NA
-    x[x<xmin]<-NA
+    xrm<-x
+    xrm[x>xmax]<-NA
+    xrm[x<xmin]<-NA
     means[means>xmax]<<-NA
     means[means<xmin]<<-NA
     
@@ -93,7 +106,7 @@ shinyServer(function(input, output) {
     
     
     # plot typical sample
-    hist(x, 
+    hist(xrm, 
          breaks=seq(xmin,xmax,length.out=50),
          main="Typical Sample",
          warn.unused = FALSE,
@@ -120,6 +133,9 @@ shinyServer(function(input, output) {
                       exp = 1/sqrt(n),
                       0))
     y0=y0/sum(y0)*length(means)*mean(diff(breaks_mh))/mean(diff(x0))
+    
+    print(means)
+    print(mean(x,na.rm=TRUE))
     
     nh<-hist(means,
              breaks=breaks_mh,

@@ -20,7 +20,7 @@ shinyUI(fluidPage(
       checkboxInput("checkbox", label = "Add samples one at a time", value = FALSE),
       br(),br(),      
       sliderInput("n", 
-                  "Number of observations:", 
+                  "Sample size:", 
                    value = 100,
                    min = 2, 
                    max = 100),
@@ -36,7 +36,7 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-       plotOutput("plot")      
+       plotOutput("plot")
     )
   )
 ))
