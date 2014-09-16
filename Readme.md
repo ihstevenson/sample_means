@@ -1,1 +1,1 @@
-This example builds on the `tabsetPanel` and `tabPanel` widgets to illustrate the how the distribution of sample means becomes Gaussian with SEM=sd/sqrt(n).
+This example builds on the `tabsetPanel` and `tabPanel` widgets to illustrate how the distribution of sample means becomes Gaussian with increasing sample size and why SEM=sd/sqrt(n).
